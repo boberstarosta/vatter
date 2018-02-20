@@ -11,8 +11,9 @@ DB_PATH = 'sqlite:///' + os.path.join(PROJECT_ROOT, 'db.sqlite')
 
 INPUT_STYLE = {
     'relief': 'flat',
-    'borderwidth': 3,
+    'borderwidth': 4,
     'highlightbackground': '#666666',
-    'highlightcolor': '#666666',
     'highlightthickness': 1,
 }
+
+FLOAT_FORMAT_STRING = '{0:.2f}'

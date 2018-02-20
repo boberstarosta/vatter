@@ -1,27 +1,30 @@
-from tkinter import *
+import tkinter as tk
 from . import settings
 
 
-#default_font = tkFont.nametofont("TkDefaultFont")
-#default_font.configure(size=48)
-
-
-class MainWindow(Tk):
+class MainWindow(tk.Tk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        i = TextInput(self, min_length=3, max_length=10)
-        i.pack(padx=4, pady=4)
+        self.option_add('*Font', 'times 14')
+
+        ti = TextInput(self, min_length=3, max_length=10)
+        ti.pack(padx=4, pady=4)
+
+        fi = FloatInput(self, min_value=-10, max_value=1000000)
+        fi.pack(padx=4, pady=4)
 
         self.update()
         self.minsize(self.winfo_width(), self.winfo_height())
 
 
-class TextInput(Entry):
+class TextInput(tk.Entry):
     def __init__(self, parent, min_length=None, max_length=None):
-        self.var = StringVar()
+        self.var = tk.StringVar()
         super().__init__(parent, textvariable=self.var, **settings.INPUT_STYLE)
 
+        if min_length is not None and max_length is not None:
+            assert min_length < max_length, 'min_length must be smaller than max_length'
         self.min_length = min_length
         self.max_length = max_length
 
@@ -53,3 +56,35 @@ class TextInput(Entry):
     @text.setter
     def text(self, value):
         self.var.set(value)
+
+
+class FloatInput(TextInput):
+    def __init__(self, parent, min_value=None, max_value=None):
+        super().__init__(parent)
+
+        if min_value is not None and max_value is not None:
+            assert min_value < max_value, 'min_value must be smaller than max_value'
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def is_valid(self):
+        value = self.value
+        if value is None:
+            return False
+        if self.min_value is not None and value < self.min_value:
+            return False
+        if self.max_value is not None and value > self.max_value:
+            return False
+
+        return super().is_valid()
+
+    @property
+    def value(self):
+        try:
+            return float(self.text.replace(',', '.'))
+        except ValueError:
+            return None
+
+    @value.setter
+    def value(self, value):
+        self.text = settings.FLOAT_FORMAT_STRING.format(value)
