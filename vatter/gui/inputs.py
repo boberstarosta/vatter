@@ -60,7 +60,7 @@ class FloatInput(TextInput):
         if self.max_value is not None and value > self.max_value:
             return False
 
-        return super().is_valid()
+        return True
 
     @property
     def value(self):
