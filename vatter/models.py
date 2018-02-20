@@ -12,6 +12,7 @@ class Customer(Base):
     id = Column(Integer, Sequence('customer_id_seq'), primary_key=True)
     name = Column(String(100))
     company = Column(String(100))
+    street_address = Column(String(100))
     postal_code = Column(String(10))
     city = Column(String(50))
     country = Column(String(50))
@@ -35,7 +36,7 @@ class Invoice(Base):
     __tablename__ = 'invoice'
 
     id = Column(Integer, Sequence('invoice_id_seq'), primary_key=True)
-    buyer_id = (Integer, ForeignKey('customer.id'))
+    buyer_id = Column(Integer, ForeignKey('customer.id'))
 
     buyer = relationship('Customer', back_populates='invoices')
     items = relationship('Item', back_populates='invoice')
