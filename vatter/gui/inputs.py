@@ -1,21 +1,5 @@
 import tkinter as tk
-from . import settings
-
-
-class MainWindow(tk.Tk):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        self.option_add('*Font', 'times 14')
-
-        ti = TextInput(self, min_length=3, max_length=10)
-        ti.pack(padx=4, pady=4)
-
-        fi = FloatInput(self, min_value=-10, max_value=1000000)
-        fi.pack(padx=4, pady=4)
-
-        self.update()
-        self.minsize(self.winfo_width(), self.winfo_height())
+from .. import settings
 
 
 class TextInput(tk.Entry):
@@ -28,14 +12,14 @@ class TextInput(tk.Entry):
         self.min_length = min_length
         self.max_length = max_length
 
-        self.color_default = self.cget("background")
-        self.color_error = "#ff9999"
-        self.color_ok = "#b3ff99"
+        self.color_default = self.cget('background')
+        self.color_error = '#ff9999'
+        self.color_ok = '#b3ff99'
 
-        self.var.trace("w", self.on_changed)
+        self.var.trace('w', lambda *args: self.on_changed())
         self.on_changed()
 
-    def on_changed(self, *args):
+    def on_changed(self):
         if self.is_valid():
             self.config(bg=self.color_ok)
         else:
@@ -81,7 +65,7 @@ class FloatInput(TextInput):
     @property
     def value(self):
         try:
-            return float(self.text.replace(',', '.'))
+            return float(self.text.replace(',', '.').replace(' ', ''))
         except ValueError:
             return None
 

@@ -16,4 +16,6 @@ INPUT_STYLE = {
     'highlightthickness': 1,
 }
 
+PACK_STYLE = {'padx': 6, 'pady': 6}
+
 FLOAT_FORMAT_STRING = '{0:.2f}'
