@@ -41,6 +41,8 @@ class Form(tk.Toplevel):
         tk.Button(frame, text='Zapisz', command=self.save).pack(**settings.PACK_STYLE)
 
         self.bind('<Return>', lambda *args: self.save())
+        self.bind('<KP_Enter>', lambda *args: self.save())
+        self.bind('<Escape>', lambda *args: self.cancel())
 
         self.widgets[0].focus_set()
 
@@ -57,6 +59,9 @@ class Form(tk.Toplevel):
         if self.is_valid():
             self.session.commit()
             self.destroy()
+
+    def cancel(self):
+        self.destroy()
 
 
 class CustomerForm(Form):
