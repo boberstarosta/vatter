@@ -20,6 +20,14 @@ class Customer(Base):
     invoices = relationship('Invoice', back_populates='buyer')
 
 
+class TaxRate(Base):
+    __tablename__ = 'taxrate'
+
+    id = Column(Integer, Sequence('taxrate_id_seq'), primary_key=True)
+    name = Column(String(50))
+    value = Column(Float)
+
+
 class Item(Base):
     __tablename__ = 'item'
 
@@ -28,8 +36,10 @@ class Item(Base):
     name = Column(String(100))
     quantity = Column(Integer)
     net_price = Column(Float)
+    tax_rate_id = Column(ForeignKey('taxrate.id'))
 
     invoice = relationship('Invoice', back_populates='items')
+    tax_rate = relationship('TaxRate')
 
 
 class Invoice(Base):
