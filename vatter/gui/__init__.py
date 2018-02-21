@@ -1,6 +1,7 @@
 import tkinter as tk
 from .. import settings, __version__
 from .inputs import TextInput, FloatInput
+from . import forms
 
 
 class MainWindow(tk.Tk):
@@ -12,7 +13,7 @@ class MainWindow(tk.Tk):
         self.title('Vatter {}'.format(__version__))
 
         frame = tk.Frame(self)
-        frame.pack(padx=8, pady=8)
+        frame.pack(padx=8, pady=8, fill='both', expand=True)
 
         tk.Label(frame, text='TextInput:').pack(settings.PACK_STYLE)
         ti = TextInput(frame, min_length=3, max_length=10)
@@ -28,6 +29,8 @@ class MainWindow(tk.Tk):
         fi.var.trace('w', lambda *args, i=fi: fv.set(str(i.value)))
         tk.Label(frame, textvariable=fv).pack(settings.PACK_STYLE)
 
+        tk.Button(text='Open form', command=self.show_form).pack(settings.PACK_STYLE)
+
         self.setup_geometry()
 
     def setup_geometry(self):
@@ -38,3 +41,6 @@ class MainWindow(tk.Tk):
         x = w / 2 - size[0] / 2
         y = h / 2 - size[1] / 2
         self.geometry("%dx%d+%d+%d" % (size + (x, y)))
+
+    def show_form(self):
+        forms.CustomerModelForm(self)

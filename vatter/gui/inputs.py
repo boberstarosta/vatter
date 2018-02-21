@@ -3,9 +3,9 @@ from .. import settings
 
 
 class TextInput(tk.Entry):
-    def __init__(self, parent, min_length=None, max_length=None):
+    def __init__(self, parent, width=80, min_length=None, max_length=None):
         self.var = tk.StringVar()
-        super().__init__(parent, textvariable=self.var, **settings.INPUT_STYLE)
+        super().__init__(parent, textvariable=self.var, width=width, **settings.INPUT_STYLE)
 
         if min_length is not None and max_length is not None:
             assert min_length < max_length, 'min_length must be smaller than max_length'
