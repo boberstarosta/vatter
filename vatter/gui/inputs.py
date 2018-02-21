@@ -41,6 +41,13 @@ class TextInput(tk.Entry):
     def text(self, value):
         self.var.set(value)
 
+    @property
+    def value(self):
+        return self.text
+    @value.setter
+    def value(self, value):
+        self.text = value
+
 
 class FloatInput(TextInput):
     def __init__(self, parent, min_value=None, max_value=None):

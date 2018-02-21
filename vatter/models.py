@@ -11,11 +11,11 @@ class Customer(Base):
 
     id = Column(Integer, Sequence('customer_id_seq'), primary_key=True)
     name = Column(String(100))
-    company = Column(String(100))
     street_address = Column(String(100))
     postal_code = Column(String(10))
     city = Column(String(50))
     country = Column(String(50))
+    tax_id_number = Column(String(20))
 
     invoices = relationship('Invoice', back_populates='buyer')
 

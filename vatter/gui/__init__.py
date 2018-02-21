@@ -1,5 +1,5 @@
 import tkinter as tk
-from .. import settings, __version__
+from .. import models, settings, __version__
 from .inputs import TextInput, FloatInput
 from . import forms
 
@@ -43,4 +43,4 @@ class MainWindow(tk.Tk):
         self.geometry("%dx%d+%d+%d" % (size + (x, y)))
 
     def show_form(self):
-        forms.CustomerModelForm(self)
+        forms.CustomerModelForm(self, models.Customer())
