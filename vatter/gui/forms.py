@@ -1,6 +1,6 @@
 import tkinter as tk
 from . import inputs, settings
-from .. import db, models
+from .. import db
 
 
 class Field:
@@ -14,8 +14,8 @@ class Field:
 class Form(tk.Toplevel):
     fields = []
 
-    def __init__(self, parent, obj, **kwargs):
-        super().__init__(parent, **kwargs)
+    def __init__(self, parent, obj):
+        super().__init__(parent)
 
         self.session = db.Session()
         self.obj = self.session.merge(obj)
@@ -59,7 +59,7 @@ class Form(tk.Toplevel):
             self.destroy()
 
 
-class CustomerModelForm(Form):
+class CustomerForm(Form):
     fields = [
         Field('name', 'Nazwisko', inputs.TextInput, min_length=4, max_length=100),
         Field('street_address', 'Adres', inputs.TextInput, max_length=100),

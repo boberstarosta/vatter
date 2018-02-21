@@ -50,4 +50,4 @@ class MainWindow(tk.Tk):
         self.geometry("%dx%d+%d+%d" % (size + (x, y)))
 
     def show_form(self):
-        forms.CustomerModelForm(self, models.Customer())
+        forms.CustomerForm(self, models.Customer())
