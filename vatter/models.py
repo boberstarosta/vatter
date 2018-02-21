@@ -19,6 +19,9 @@ class Customer(Base):
 
     invoices = relationship('Invoice', back_populates='buyer')
 
+    def __repr__(self):
+        return '<{} {} {}>'.format(self.__class__.__name__, self.id, self.name)
+
 
 class TaxRate(Base):
     __tablename__ = 'taxrate'
@@ -26,6 +29,9 @@ class TaxRate(Base):
     id = Column(Integer, Sequence('taxrate_id_seq'), primary_key=True)
     name = Column(String(50))
     value = Column(Float)
+
+    def __repr__(self):
+        return '<{} {} {}>'.format(self.__class__.__name__, self.id, self.name)
 
 
 class Item(Base):
@@ -41,6 +47,9 @@ class Item(Base):
     invoice = relationship('Invoice', back_populates='items')
     tax_rate = relationship('TaxRate')
 
+    def __repr__(self):
+        return '<{} {} {}>'.format(self.__class__.__name__, self.id, self.name)
+
 
 class Invoice(Base):
     __tablename__ = 'invoice'
@@ -50,3 +59,6 @@ class Invoice(Base):
 
     buyer = relationship('Customer', back_populates='invoices')
     items = relationship('Item', back_populates='invoice')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.id)
