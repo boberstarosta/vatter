@@ -38,7 +38,10 @@ class Form(tk.Toplevel):
 
         frame = tk.Frame(self)
         frame.pack(side='bottom', fill='x', expand=True)
-        tk.Button(frame, text='Zapisz', command=self.save).pack(**settings.PACK_STYLE)
+        tk.Button(frame, text='Zapisz', command=self.save, **settings.BUTTON_STYLE)\
+            .pack(side='left', **settings.PACK_STYLE)
+        tk.Button(frame, text='Zamknij', command=self.cancel, **settings.BUTTON_STYLE)\
+            .pack(side='left', **settings.PACK_STYLE)
 
         self.bind('<Return>', lambda *args: self.save())
         self.bind('<KP_Enter>', lambda *args: self.save())

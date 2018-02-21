@@ -16,6 +16,15 @@ INPUT_STYLE = {
     'highlightthickness': 1,
 }
 
+BUTTON_STYLE = {
+    'relief': 'flat',
+    'borderwidth': 4,
+    'background': '#FFFFFF',
+    'highlightbackground': '#666666',
+    'highlightthickness': 1,
+}
+
+
 PACK_STYLE = {'padx': 6, 'pady': 6, 'fill': 'x', 'expand': True}
 GRID_STYLE = {'padx': 6, 'pady': 6}
 

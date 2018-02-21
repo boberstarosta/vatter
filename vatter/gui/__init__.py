@@ -34,9 +34,9 @@ class MainWindow(tk.Tk):
         ii.pack(settings.PACK_STYLE)
         iv = tk.StringVar()
         ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
-        tk.Label(frame, textvariable=iv).pack(settings.PACK_STYLE)
+        tk.Label(frame, textvariable=iv).pack(**settings.PACK_STYLE)
 
-        tk.Button(text='Open form', command=self.show_form).pack(settings.PACK_STYLE)
+        tk.Button(frame, text='Open form', command=self.show_form, **settings.BUTTON_STYLE).pack(**settings.PACK_STYLE)
 
         self.setup_geometry()
 
