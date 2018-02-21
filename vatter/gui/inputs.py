@@ -79,3 +79,35 @@ class FloatInput(TextInput):
     @value.setter
     def value(self, value):
         self.text = settings.FLOAT_FORMAT_STRING.format(value)
+
+
+class IntInput(TextInput):
+    def __init__(self, parent, min_value=None, max_value=None):
+        super().__init__(parent)
+
+        if min_value is not None and max_value is not None:
+            assert min_value < max_value, 'min_value must be smaller than max_value'
+        self.min_value = min_value
+        self.max_value = max_value
+
+    def is_valid(self):
+        value = self.value
+        if value is None:
+            return False
+        if self.min_value is not None and value < self.min_value:
+            return False
+        if self.max_value is not None and value > self.max_value:
+            return False
+
+        return True
+
+    @property
+    def value(self):
+        try:
+            return int(self.text)
+        except ValueError:
+            return None
+
+    @value.setter
+    def value(self, value):
+        self.text = str(value)
