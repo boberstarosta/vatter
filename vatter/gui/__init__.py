@@ -8,7 +8,7 @@ class MainWindow(tk.Tk):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.option_add('*Font', 'times 14')
+        self.option_add('*Font', 'TkFixedFont 14')
 
         self.title('Vatter {}'.format(__version__))
 
