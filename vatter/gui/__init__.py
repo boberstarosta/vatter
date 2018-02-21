@@ -1,7 +1,7 @@
 import tkinter as tk
-from .. import models, settings, __version__
+from .. import db, models, settings, __version__
 from .inputs import TextInput, FloatInput, IntInput
-from . import forms
+from . import forms, views
 
 
 class MainWindow(tk.Tk):
@@ -51,3 +51,8 @@ class MainWindow(tk.Tk):
 
     def show_form(self):
         forms.CustomerForm(self, models.Customer())
+
+    def open_customer_detail(self, customer_id):
+        session = db.Session()
+        customer = session.query(models.Customer).get(customer_id)
+        views.CustomerDetailView(self, customer)

@@ -12,10 +12,12 @@ class Field:
 
 
 class Form(tk.Toplevel):
-    fields = []
+    fields = None
 
     def __init__(self, parent, obj):
         super().__init__(parent)
+
+        self.title('Klient')
 
         self.session = db.Session()
         self.obj = self.session.merge(obj)
@@ -30,7 +32,8 @@ class Form(tk.Toplevel):
 
         for i, field in enumerate(self.fields):
             frame.grid_rowconfigure(i, weight=1)
-            tk.Label(frame, text=field.caption + ':').grid(column=0, row=i, sticky='ew', **settings.GRID_STYLE)
+            tk.Label(frame, text=field.caption + ':', anchor='e')\
+                .grid(column=0, row=i, sticky='ew', **settings.GRID_STYLE)
             widget = field.widget_class(frame, **field.widget_args)
             widget.grid(column=1, row=i, sticky='ew', **settings.GRID_STYLE)
             self.widgets.append(widget)
@@ -62,6 +65,7 @@ class Form(tk.Toplevel):
         if self.is_valid():
             self.session.commit()
             self.destroy()
+            self.master.open_customer_detail(self.obj.id)
 
     def cancel(self):
         self.destroy()
@@ -69,9 +73,10 @@ class Form(tk.Toplevel):
 
 class CustomerForm(Form):
     fields = [
-        Field('name', 'Nazwisko', inputs.TextInput, min_length=4, max_length=100),
+        Field('name', 'Nazwa', inputs.TextInput, min_length=4, max_length=100),
         Field('street_address', 'Adres', inputs.TextInput, max_length=100),
         Field('postal_code', 'Kod pocztowy', inputs.TextInput, max_length=10),
         Field('city', 'Miasto', inputs.TextInput, max_length=50),
         Field('country', 'Państwo', inputs.TextInput, max_length=50),
+        Field('tax_id_number', 'NIP', inputs.TextInput, max_length=20),
     ]
