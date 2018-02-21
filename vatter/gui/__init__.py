@@ -1,6 +1,6 @@
 import tkinter as tk
 from .. import models, settings, __version__
-from .inputs import TextInput, FloatInput
+from .inputs import TextInput, FloatInput, IntInput
 from . import forms
 
 
@@ -28,6 +28,13 @@ class MainWindow(tk.Tk):
         fv = tk.StringVar()
         fi.var.trace('w', lambda *args, i=fi: fv.set(str(i.value)))
         tk.Label(frame, textvariable=fv).pack(settings.PACK_STYLE)
+
+        tk.Label(frame, text='IntInput:').pack(settings.PACK_STYLE)
+        ii = IntInput(frame, min_value=-10, max_value=1000)
+        ii.pack(settings.PACK_STYLE)
+        iv = tk.StringVar()
+        ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
+        tk.Label(frame, textvariable=iv).pack(settings.PACK_STYLE)
 
         tk.Button(text='Open form', command=self.show_form).pack(settings.PACK_STYLE)
 
