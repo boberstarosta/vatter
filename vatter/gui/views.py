@@ -30,9 +30,23 @@ class DetailView(tk.Toplevel):
 
         buttons_frame = tk.Frame(self)
         buttons_frame.pack(fill='x', expand=True)
-        tk.Button(buttons_frame, text='Edytuj', **settings.BUTTON_STYLE).pack(side='left', **settings.PACK_STYLE)
-        tk.Button(buttons_frame, text='Usuń', **settings.BUTTON_STYLE).pack(side='left', **settings.PACK_STYLE)
-        tk.Button(buttons_frame, text='Zamknij', **settings.BUTTON_STYLE).pack(side='left', **settings.PACK_STYLE)
+        tk.Button(buttons_frame, text='Edytuj', **settings.BUTTON_STYLE, command=self.edit)\
+            .pack(side='left', **settings.PACK_STYLE)
+        tk.Button(buttons_frame, text='Usuń', **settings.BUTTON_STYLE, command=self.delete)\
+            .pack(side='left', **settings.PACK_STYLE)
+        tk.Button(buttons_frame, text='Zamknij', **settings.BUTTON_STYLE, command=self.close)\
+            .pack(side='left', **settings.PACK_STYLE)
+
+    def edit(self):
+        self.destroy()
+        self.master.show_customer_form(self.obj.id)
+
+    def delete(self):
+        # TODO: Display confirmation dialog and delete
+        pass
+
+    def close(self):
+        self.destroy()
 
 
 class CustomerDetailView(DetailView):
