@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from .. import settings
 
 
@@ -111,3 +112,22 @@ class IntInput(TextInput):
     @value.setter
     def value(self, value):
         self.text = str(value)
+
+
+class ModelChoiceInput(ttk.Combobox):
+    def __init__(self, parent, model, session):
+        self.var = tk.StringVar()
+        super().__init__(parent, textvariable=self.var)
+        self.model = model
+        self.session = session
+        queryset = tuple(str(row) for row in self.get_queryset())
+        self['values'] = queryset
+        self.objects = {obj.id: obj for obj in queryset }
+        self.bind('<<ComboboxSelected>>', function)
+        self.selected_obj = None
+
+    def get_queryset(self):
+        return self.session.query(self.model).all()
+
+    def on_selected(self, event):
+        self.selected_obj =
