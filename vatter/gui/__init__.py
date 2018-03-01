@@ -36,7 +36,8 @@ class MainWindow(tk.Tk):
         ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
         tk.Label(frame, textvariable=iv).pack(**settings.PACK_STYLE)
 
-        tk.Button(frame, text='Open form', command=self.show_form, **settings.BUTTON_STYLE).pack(**settings.PACK_STYLE)
+        tk.Button(frame, text='Open form', command=self.show_customer_form, **settings.BUTTON_STYLE)\
+            .pack(**settings.PACK_STYLE)
 
         self.setup_geometry()
 
@@ -49,8 +50,13 @@ class MainWindow(tk.Tk):
         y = h / 2 - size[1] / 2
         self.geometry("%dx%d+%d+%d" % (size + (x, y)))
 
-    def show_form(self):
-        forms.CustomerForm(self, models.Customer())
+    def show_customer_form(self, customer_id=None):
+        if customer_id is None:
+            customer = models.Customer()
+        else:
+            session = db.Session()
+            customer = session.query(models.Customer).get(customer_id)
+        forms.CustomerForm(self, customer)
 
     def open_customer_detail(self, customer_id):
         session = db.Session()

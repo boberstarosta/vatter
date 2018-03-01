@@ -19,8 +19,9 @@ INPUT_STYLE = {
 BUTTON_STYLE = {
     'relief': 'flat',
     'borderwidth': 4,
-    'background': '#FFFFFF',
+    'background': '#99b3e6',
     'highlightbackground': '#666666',
+    'highlightcolor': '#666666',
     'highlightthickness': 1,
 }
 
