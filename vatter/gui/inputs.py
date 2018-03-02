@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from .. import settings
+from sqlalchemy import or_
+from .. import db, settings
 
 
 class TextInput(tk.Entry):
@@ -115,19 +116,25 @@ class IntInput(TextInput):
 
 
 class ModelChoiceInput(ttk.Combobox):
-    def __init__(self, parent, model, session):
+    def __init__(self, parent, model, filter_fields):
         self.var = tk.StringVar()
         super().__init__(parent, textvariable=self.var)
         self.model = model
-        self.session = session
-        queryset = tuple(str(row) for row in self.get_queryset())
-        self['values'] = queryset
-        self.objects = {obj.id: obj for obj in queryset }
-        self.bind('<<ComboboxSelected>>', function)
-        self.selected_obj = None
+        self.filter_fields = filter_fields
+        self.session = db.Session()
+        self.bind('<<ComboboxSelected>>', self.on_selected)
+        self['values'] = self.get_queryset()
+        self.var.trace('w', self.on_change)
 
     def get_queryset(self):
-        return self.session.query(self.model).all()
+        filter = '%' + self.get() + '%'
+        filter_conditions = [getattr(self.model, field).ilike(filter) for field in self.filter_fields]
+        return self.session.query(self.model).filter(or_(*filter_conditions)).all()
+
+    def on_change(self, *args):
+        self['values'] = self.get_queryset()
+        if self.focus:
+            self.event_generate('<Down>')
 
     def on_selected(self, event):
-        self.selected_obj =
+        pass

@@ -22,6 +22,9 @@ class Customer(Base):
     def __repr__(self):
         return '<{} {} {}>'.format(self.__class__.__name__, self.id, self.name)
 
+    def __str__(self):
+        return '{}, {}, {}'.format(self.name, self.city, self.tax_id_number)
+
 
 class TaxRate(Base):
     __tablename__ = 'taxrate'

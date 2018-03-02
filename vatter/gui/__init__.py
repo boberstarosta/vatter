@@ -1,6 +1,6 @@
 import tkinter as tk
 from .. import db, models, settings, __version__
-from .inputs import TextInput, FloatInput, IntInput
+from .inputs import TextInput, FloatInput, IntInput, ModelChoiceInput
 from . import forms, views
 
 
@@ -35,6 +35,9 @@ class MainWindow(tk.Tk):
         iv = tk.StringVar()
         ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
         tk.Label(frame, textvariable=iv).pack(**settings.PACK_STYLE)
+
+        mci = ModelChoiceInput(frame, models.Customer, ('name', 'city', 'tax_id_number'))
+        mci.pack(settings.PACK_STYLE)
 
         tk.Button(frame, text='Open form', command=self.show_customer_form, **settings.BUTTON_STYLE)\
             .pack(**settings.PACK_STYLE)
