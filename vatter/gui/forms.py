@@ -58,6 +58,7 @@ class Form(tk.Toplevel):
     def is_valid(self):
         for widget in self.widgets:
             if not widget.is_valid():
+                widget.focus_set()
                 return False
         return True
 
@@ -67,31 +68,9 @@ class Form(tk.Toplevel):
             self.destroy()
             self.master.open_customer_detail(self.obj.id)
 
+
     def cancel(self):
         self.destroy()
-
-
-class InlineForm(tk.Frame):
-    fields = None
-
-    def __init__(self, parent, obj, **kwargs):
-        super().__init__(parent, **kwargs)
-        self.session = db.Session()
-        self.obj = obj
-
-        self.grid_rowconfigure(0, weight=1)
-
-        self.widgets = []
-
-        for i, field in enumerate(self.fields):
-            self.grid_columnconfigure(i, weight=1)
-            widget = field.widget_class(self, **field.widget_args)
-            widget.grid(column=i, row=0, sticky='ew', **settings.GRID_STYLE)
-            self.widgets.append(widget)
-            widget.var.trace('w', lambda *args, f=field, w=widget: self.on_change(f, w))
-
-    def on_change(self, field, widget):
-        pass
 
 
 class CustomerForm(Form):

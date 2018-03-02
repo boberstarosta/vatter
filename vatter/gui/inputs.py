@@ -17,6 +17,8 @@ class TextInput(tk.Entry):
         self.color_error = '#ff9999'
         self.color_ok = '#b3ff99'
 
+        self.bind('<Escape>', lambda e: self.master.focus_set())
+
         self.var.trace('w', lambda *args: self.on_changed())
         self.on_changed()
 
@@ -138,6 +140,7 @@ class ModelChoiceInput(tk.Frame):
         self.entry_widget.bind('<FocusIn>', self.on_entry_focus_in)
         self.entry_widget.bind('<FocusOut>', self.on_entry_focus_out)
         self.entry_widget.bind('<Down>', self.on_entry_down)
+        self.entry_widget.bind('<Escape>', lambda e: self.master.focus_set())
 
         self.listbox_widget.bind('<FocusOut>', self.on_listbox_focus_out)
         self.listbox_widget.bind('<<ListboxSelect>>', self.on_listbox_select)
@@ -190,7 +193,7 @@ class ModelChoiceInput(tk.Frame):
         self.listbox_widget.event_generate('<<ListboxSelect>>')
 
     def on_listbox_escape(self, event):
-        self.master.focus_set()
+        self.entry_widget.focus_set()
 
     def get_selected_object(self):
         try:
