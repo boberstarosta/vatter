@@ -37,6 +37,9 @@ class Form(tk.Toplevel):
             widget = field.widget_class(frame, **field.widget_args)
             widget.grid(column=1, row=i, sticky='ew', **settings.GRID_STYLE)
             self.widgets.append(widget)
+            value = getattr(self.obj, field.column_name)
+            if value is not None:
+                widget.var.set(value)
             widget.var.trace('w', lambda *args, f=field, w=widget: self.on_change(f, w))
 
         frame = tk.Frame(self)
