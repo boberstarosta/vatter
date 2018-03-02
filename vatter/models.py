@@ -23,7 +23,7 @@ class Customer(Base):
         return '<{} {} {}>'.format(self.__class__.__name__, self.id, self.name)
 
     def __str__(self):
-        return '{}, {}, {}'.format(self.name, self.city, self.tax_id_number)
+        return '{}'.format(self.name)
 
 
 class TaxRate(Base):

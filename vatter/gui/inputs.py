@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 from sqlalchemy import or_
 from .. import db, settings
 
@@ -115,26 +114,95 @@ class IntInput(TextInput):
         self.text = str(value)
 
 
-class ModelChoiceInput(ttk.Combobox):
+class ModelChoiceInput(tk.Frame):
     def __init__(self, parent, model, filter_fields):
+        super().__init__(parent)
+
         self.var = tk.StringVar()
-        super().__init__(parent, textvariable=self.var)
         self.model = model
         self.filter_fields = filter_fields
         self.session = db.Session()
-        self.bind('<<ComboboxSelected>>', self.on_selected)
-        self['values'] = self.get_queryset()
-        self.var.trace('w', self.on_change)
+        self.objects = {}
+
+        self.entry_widget = tk.Entry(self, textvariable=self.var, **settings.INPUT_STYLE)
+        self.entry_widget.pack(side=tk.TOP, expand=True, fill=tk.X)
+
+        self.listbox_widget = tk.Listbox(self, **settings.INPUT_STYLE)
+        self.listbox_widget.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
+
+        self.color_default = self.entry_widget.cget('background')
+        self.color_error = '#ff9999'
+        self.color_ok = '#b3ff99'
+
+        self.entry_widget.bind('<KeyRelease>', self.update_autocomplete)
+        self.entry_widget.bind('<FocusIn>', self.on_entry_focus_in)
+        self.entry_widget.bind('<FocusOut>', self.on_entry_focus_out)
+        self.entry_widget.bind('<Down>', self.on_entry_down)
+
+        self.listbox_widget.bind('<FocusOut>', self.on_listbox_focus_out)
+        self.listbox_widget.bind('<<ListboxSelect>>', self.on_listbox_select)
+        self.listbox_widget.bind('<Return>', self.on_listbox_return)
+        self.listbox_widget.bind('<KP_Enter>', self.on_listbox_return)
+        self.listbox_widget.bind('<Escape>', self.on_listbox_escape)
+
+        self.var.trace('w', self.update_background)
+
+        self.update_autocomplete()
+        self.listbox_widget.pack_forget()
+        self.update_background()
 
     def get_queryset(self):
-        filter = '%' + self.get() + '%'
-        filter_conditions = [getattr(self.model, field).ilike(filter) for field in self.filter_fields]
-        return self.session.query(self.model).filter(or_(*filter_conditions)).all()
+        text = '%' + self.var.get().strip() + '%'
+        filter_clauses = [getattr(self.model, field).ilike(text) for field in self.filter_fields]
+        return self.session.query(self.model).filter(or_(*filter_clauses)).all()
 
-    def on_change(self, *args):
-        self['values'] = self.get_queryset()
-        if self.focus:
-            self.event_generate('<Down>')
+    def update_autocomplete(self, event=None):
+        self.listbox_widget.delete(0, tk.END)
+        self.objects.clear()
+        self.listbox_widget['height'] = 5
+        for record in self.get_queryset():
+            self.listbox_widget.insert(tk.END, str(record))
+            self.objects[str(record)] = record
 
-    def on_selected(self, event):
-        pass
+    def on_entry_focus_in(self, event):
+        self.listbox_widget.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
+
+    def on_entry_focus_out(self, event):
+        if self.focus_get() != self.listbox_widget:
+            self.listbox_widget.pack_forget()
+
+    def on_entry_down(self, event):
+        self.listbox_widget.focus_set()
+        self.listbox_widget.selection_set(0)
+        self.listbox_widget.event_generate('<<ListboxSelect>>')
+
+    def on_listbox_focus_out(self, event):
+        if self.focus_get() != self.entry_widget:
+            self.listbox_widget.pack_forget()
+
+    def on_listbox_select(self, event):
+        curselection = self.listbox_widget.curselection()
+        if curselection:
+            self.var.set(self.listbox_widget.get(curselection))
+
+    def on_listbox_return(self, event):
+        self.master.focus_set()
+        self.listbox_widget.event_generate('<<ListboxSelect>>')
+
+    def on_listbox_escape(self, event):
+        self.master.focus_set()
+
+    def get_selected_object(self):
+        try:
+            return self.objects[self.var.get()]
+        except KeyError:
+            return None
+
+    def is_valid(self):
+        return self.get_selected_object() is not None
+
+    def update_background(self, *args):
+        if self.is_valid():
+            self.entry_widget.config(bg=self.color_ok)
+        else:
+            self.entry_widget.config(bg=self.color_error)
