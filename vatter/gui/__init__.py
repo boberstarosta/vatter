@@ -43,6 +43,9 @@ class MainWindow(tk.Tk):
         tk.Button(frame, text='Open form', command=self.show_customer_form, **settings.BUTTON_STYLE)\
             .pack(**settings.PACK_STYLE)
 
+        tk.Button(frame, text='New inv', command=self.show_invoice_form, **settings.BUTTON_STYLE)\
+            .pack(**settings.PACK_STYLE)
+
         self.setup_geometry()
 
     def setup_geometry(self):
@@ -61,6 +64,14 @@ class MainWindow(tk.Tk):
             session = db.Session()
             customer = session.query(models.Customer).get(customer_id)
         forms.CustomerForm(self, customer)
+
+    def show_invoice_form(self, invoice_id=None):
+        if invoice_id is None:
+            invoice = models.Invoice()
+        else:
+            session = db.Session()
+            invoice = session.query(models.Invoice).get(invoice_id)
+        forms.InvoiceForm(self, invoice)
 
     def open_customer_detail(self, customer_id):
         session = db.Session()
