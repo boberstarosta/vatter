@@ -1,5 +1,6 @@
 import tkinter as tk
-from . import inputs, models, settings
+from tkinter import messagebox
+from . import inputs, settings
 from .. import db
 
 
@@ -21,6 +22,8 @@ class Form(tk.Toplevel):
 
         self.session = db.Session()
         self.obj = self.session.merge(obj)
+
+        self.modified = False
 
         frame = tk.Frame(self)
         frame.pack(fill='both', expand=True)
@@ -57,6 +60,7 @@ class Form(tk.Toplevel):
 
     def on_change(self, field, widget):
         setattr(self.obj, field.column_name, widget.text)
+        self.modified = True
 
     def is_valid(self):
         for widget in self.widgets:
@@ -72,7 +76,11 @@ class Form(tk.Toplevel):
             self.master.open_customer_detail(self.obj.id)
 
     def cancel(self):
-        self.destroy()
+        dialog_result = 'ok'
+        if self.modified:
+            dialog_result = messagebox.askokcancel("Zamknąć?", "Zmiany nie będą zapisane. Czy na pewno zamknąć?")
+        if dialog_result == 'ok':
+            self.destroy()
 
 
 class CustomerForm(Form):
@@ -84,60 +92,3 @@ class CustomerForm(Form):
         Field('country', 'Państwo', inputs.TextInput, max_length=50),
         Field('tax_id_number', 'NIP', inputs.TextInput, max_length=20),
     ]
-
-
-class InvoiceForm(tk.Toplevel):
-    def __init__(self, parent, obj):
-        super().__init__(parent)
-
-        self.title('Faktura')
-
-        self.session = db.Session()
-        self.obj = self.session.merge(obj)
-
-        frame = tk.Frame(self)
-        frame.pack(fill='both', expand=True)
-
-        frame.grid_columnconfigure(0, weight=1)
-        frame.grid_columnconfigure(1, weight=1)
-
-        self.widgets = []
-
-        buyer_field = Field('buyer_id', 'Kupujący', inputs.ModelChoiceInput, model=models.Customer,
-                            filter_fields=('name', 'city', 'tax_id_number'))
-
-        frame.grid_rowconfigure(0, weight=1)
-        tk.Label(frame, text=buyer_field.caption + ':', anchor='e')\
-            .grid(column=0, row=0, sticky='ew', **settings.GRID_STYLE)
-        widget = buyer_field.widget_class(frame, **buyer_field.widget_args)
-        widget.grid(column=1, row=0, sticky='ew', **settings.GRID_STYLE)
-        value = getattr(self.obj, buyer_field.column_name)
-        if value is not None:
-            widget.var.set(value)
-        widget.var.trace('w', lambda *args, f=buyer_field, w=widget: self.on_change(f, w))
-        self.widgets.append(widget)
-
-        frame = tk.Frame(self)
-        frame.pack(side='bottom', fill='x', expand=True)
-        tk.Button(frame, text='Zapisz', command=self.save, **settings.BUTTON_STYLE)\
-            .pack(side='left', **settings.PACK_STYLE)
-        tk.Button(frame, text='Zamknij', command=self.cancel, **settings.BUTTON_STYLE)\
-            .pack(side='left', **settings.PACK_STYLE)
-
-    def on_change(self, field, widget):
-        setattr(self.obj, field.column_name, widget.get_selected_object().id)
-
-    def is_valid(self):
-        for widget in self.widgets:
-            if not widget.is_valid():
-                widget.focus_set()
-                return False
-        return True
-
-    def save(self):
-        if self.is_valid():
-            self.session.commit()
-            self.destroy()
-
-    def cancel(self):
-        self.destroy()

@@ -1,6 +1,6 @@
 import tkinter as tk
 from .. import db, models, settings, __version__
-from .inputs import TextInput, FloatInput, IntInput, ModelChoiceInput
+from .inputs import TextInput, FloatInput, IntInput
 from . import forms, views
 
 
@@ -36,14 +36,7 @@ class MainWindow(tk.Tk):
         ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
         tk.Label(frame, textvariable=iv).pack(**settings.PACK_STYLE)
 
-        tk.Label(frame, text='ModelChoiceInput:').pack(**settings.PACK_STYLE)
-        mci = ModelChoiceInput(frame, models.Customer, ('name', 'city', 'tax_id_number'))
-        mci.pack(**settings.PACK_STYLE)
-
         tk.Button(frame, text='Open form', command=self.show_customer_form, **settings.BUTTON_STYLE)\
-            .pack(**settings.PACK_STYLE)
-
-        tk.Button(frame, text='New inv', command=self.show_invoice_form, **settings.BUTTON_STYLE)\
             .pack(**settings.PACK_STYLE)
 
         self.setup_geometry()
@@ -64,14 +57,6 @@ class MainWindow(tk.Tk):
             session = db.Session()
             customer = session.query(models.Customer).get(customer_id)
         forms.CustomerForm(self, customer)
-
-    def show_invoice_form(self, invoice_id=None):
-        if invoice_id is None:
-            invoice = models.Invoice()
-        else:
-            session = db.Session()
-            invoice = session.query(models.Invoice).get(invoice_id)
-        forms.InvoiceForm(self, invoice)
 
     def open_customer_detail(self, customer_id):
         session = db.Session()
