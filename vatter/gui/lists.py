@@ -17,7 +17,7 @@ class ModelSelectList(tk.Toplevel):
         self.grid_rowconfigure(1, weight=1)
 
         self.filter_var = tk.StringVar()
-        entry = tk.Entry(self, textvariable=self.filter_var,**settings.INPUT_STYLE)
+        entry = tk.Entry(self, textvariable=self.filter_var, **settings.INPUT_STYLE)
         entry.grid(column=0, row=0, columnspan=2, sticky=tk.EW, **settings.GRID_STYLE)
 
         frame = tk.Frame(self)
@@ -26,9 +26,9 @@ class ModelSelectList(tk.Toplevel):
         self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar = tk.Scrollbar(frame)
         scrollbar.pack(fill=tk.Y, expand=True)
-
         self.listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.listbox.yview)
+        self.listbox.bind('<<ListboxSelect>>', self.on_listbox_select)
 
         self.update_listbox()
 
@@ -46,9 +46,24 @@ class ModelSelectList(tk.Toplevel):
         for item in queryset:
             self.listbox.insert(tk.END, str(item))
             self.objects.append(item)
+        self.listbox.select_clear(0, tk.END)
 
     def on_filter_changed(self, *args):
         self.update_listbox()
+
+    def on_listbox_select(self, event):
+        print(self.get_selected_object())
+
+    def get_selected_object(self):
+        curselection = self.listbox.curselection()
+        if curselection:
+            index = curselection[0]
+            try:
+                return self.objects[index]
+            except IndexError:
+                return None
+        else:
+            return None
 
     def select(self):
         pass
