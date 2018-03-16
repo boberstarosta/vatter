@@ -1,7 +1,7 @@
 import tkinter as tk
 from .. import db, models, settings, __version__
 from .inputs import TextInput, FloatInput, IntInput
-from . import forms, views
+from . import forms, lists, views
 
 
 class MainWindow(tk.Tk):
@@ -15,26 +15,29 @@ class MainWindow(tk.Tk):
         frame = tk.Frame(self)
         frame.pack(padx=8, pady=8, fill='both', expand=True)
 
-        tk.Label(frame, text='TextInput:').pack(settings.PACK_STYLE)
+        tk.Label(frame, text='TextInput:').pack(**settings.PACK_STYLE)
         ti = TextInput(frame, min_length=3, max_length=10)
         ti.pack(settings.PACK_STYLE)
         tv = tk.StringVar()
         ti.var.trace('w', lambda *args, i=ti: tv.set(i.text))
-        tk.Label(frame, textvariable=tv).pack(settings.PACK_STYLE)
+        tk.Label(frame, textvariable=tv).pack(**settings.PACK_STYLE)
 
-        tk.Label(frame, text='FloatInput:').pack(settings.PACK_STYLE)
+        tk.Label(frame, text='FloatInput:').pack(**settings.PACK_STYLE)
         fi = FloatInput(frame, min_value=-10, max_value=1000000)
-        fi.pack(settings.PACK_STYLE)
+        fi.pack(**settings.PACK_STYLE)
         fv = tk.StringVar()
         fi.var.trace('w', lambda *args, i=fi: fv.set(str(i.value)))
-        tk.Label(frame, textvariable=fv).pack(settings.PACK_STYLE)
+        tk.Label(frame, textvariable=fv).pack(**settings.PACK_STYLE)
 
-        tk.Label(frame, text='IntInput:').pack(settings.PACK_STYLE)
+        tk.Label(frame, text='IntInput:').pack(**settings.PACK_STYLE)
         ii = IntInput(frame, min_value=-10, max_value=1000)
-        ii.pack(settings.PACK_STYLE)
+        ii.pack(**settings.PACK_STYLE)
         iv = tk.StringVar()
         ii.var.trace('w', lambda *args, i=ii: iv.set(str(i.value)))
         tk.Label(frame, textvariable=iv).pack(**settings.PACK_STYLE)
+
+        tk.Button(frame, text='CustomerSelectList', command=self.show_customer_list, **settings.BUTTON_STYLE)\
+            .pack(**settings.PACK_STYLE)
 
         tk.Button(frame, text='Open form', command=self.show_customer_form, **settings.BUTTON_STYLE)\
             .pack(**settings.PACK_STYLE)
@@ -62,3 +65,6 @@ class MainWindow(tk.Tk):
         session = db.Session()
         customer = session.query(models.Customer).get(customer_id)
         views.CustomerDetailView(self, customer)
+
+    def show_customer_list(self):
+        lists.CustomerSelectList(self)
